@@ -1,9 +1,5 @@
 Installer\Installer\
-Installer\Installer\*
 MefScriptInterface\bin\
-MefScriptInterface\bin\*
 *\obj\
-*\obj\*
 *\bin\*
-\bin\*
 *.csproj.user
