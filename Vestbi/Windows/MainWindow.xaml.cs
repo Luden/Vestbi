@@ -294,18 +294,39 @@ namespace Vestbi
             ProgramSettings.Save();
         }
 
+        void ShowActivate()
+        {
+            _hook.UnregisterAllKeys();
+            this.Show();
+            this.Activate();
+            this.WindowState = WindowState.Normal;
+        }
+
         void AddTrayIcon()
         {
             _trayIcon = new System.Windows.Forms.NotifyIcon();
             _trayIcon.Icon = Properties.Resources.iconSmall;
             _trayIcon.Visible = true;
-            _trayIcon.DoubleClick +=
-                delegate(object sender, EventArgs args)
+            _trayIcon.DoubleClick += (o, e) => ShowActivate();
+            _trayIcon.MouseClick += (o, e) =>
                 {
-                    _hook.UnregisterAllKeys();
-                    this.Show();
-                    this.Activate();
-                    this.WindowState = WindowState.Normal;
+                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    {
+                        var menu = new ContextMenu();
+
+                        var openButton = new MenuItem() { };
+                        openButton.Header = "Open";
+                        openButton.Click += (oi, ei) => ShowActivate();
+                        menu.Items.Add(openButton);
+
+                        var closeButton = new MenuItem();
+                        closeButton.Header = "Exit";
+                        closeButton.Click += (oi, ei) => Close();
+                        menu.Items.Add(closeButton);
+
+                        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse;
+                        menu.IsOpen = true;
+                    }
                 };
         }
 
@@ -477,11 +498,6 @@ namespace Vestbi
         {
             _optionsShown = false;
             FadeRect.Visibility = Visibility.Hidden;
-        }
-
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void RunOptionsClick(object sender, RoutedEventArgs e)
@@ -735,7 +751,7 @@ namespace Vestbi
 
         private void UpdateButtonClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://sourceforge.net/projects/vestbi");
+            Process.Start("http://sourceforge.net/projects/vestbi/files/latest/download");
         }
 
         private void BtnOptionsClick(object sender, RoutedEventArgs e)

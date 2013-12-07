@@ -1179,11 +1179,7 @@
 		<row><td>VESTBI</td><td>ProgramFilesFolder</td><td>Vestbi</td><td/><td>0</td><td/></row>
 		<row><td>WindowsFolder</td><td>TARGETDIR</td><td>.:Windows</td><td/><td>0</td><td/></row>
 		<row><td>WindowsVolume</td><td>TARGETDIR</td><td>.:WinRoot</td><td/><td>0</td><td/></row>
-		<row><td>luden</td><td>ProgramMenuFolder</td><td>Luden</td><td/><td>1</td><td/></row>
-		<row><td>somesoft</td><td>ProgramMenuFolder</td><td>SomeSoft</td><td/><td>1</td><td/></row>
-		<row><td>vestbi</td><td>ProgramMenuFolder</td><td>Vestbi</td><td/><td>1</td><td/></row>
-		<row><td>vestbi1</td><td>luden</td><td>Vestbi</td><td/><td>1</td><td/></row>
-		<row><td>vestbi2</td><td>somesoft</td><td>Vestbi</td><td/><td>1</td><td/></row>
+		<row><td>vestbi2</td><td>ProgramMenuFolder</td><td>Vestbi</td><td/><td>1</td><td/></row>
 	</table>
 
 	<table name="DrLocator">
@@ -2633,6 +2629,7 @@
 		<col def="I2">Order</col>
 		<col def="I2">ISSetupLocation</col>
 		<col def="S255">ISReleaseFlags</col>
+		<row><td>_9442A14A_C905_45A7_A90C_5110CC2E0F69_</td><td>Microsoft .NET Framework 4.5 Web.prq</td><td/><td/><td/></row>
 	</table>
 
 	<table name="ISSetupType">
@@ -2666,7 +2663,7 @@
 		<col def="I2">Encoded</col>
 		<col def="S0">Comment</col>
 		<col def="I4">TimeStamp</col>
-		<row><td>COMPANY_NAME</td><td>1033</td><td>SomeSoft</td><td>0</td><td/><td>1042400183</td></row>
+		<row><td>COMPANY_NAME</td><td>1033</td><td>SomeSoft</td><td>0</td><td/><td>1176569024</td></row>
 		<row><td>DN_AlwaysInstall</td><td>1033</td><td>Always Install</td><td>0</td><td/><td>371320311</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_COLOR</td><td>1033</td><td>The color settings of your system are not adequate for running [ProductName].</td><td>0</td><td/><td>371320311</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION45FULL</td><td>1033</td><td>Microsoft .NET Framework 4.5 Full package or greater needs to be installed for this installation to continue.</td><td>0</td><td/><td>371320375</td></row>
@@ -3771,8 +3768,8 @@
 		<row><td>IDS__TargetReq_DESC_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>371320311</td></row>
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>371320311</td></row>
 		<row><td>ID_STRING1</td><td>1033</td><td/><td>0</td><td/><td>371320311</td></row>
-		<row><td>ID_STRING2</td><td>1033</td><td>http://www.SomeSoft.com</td><td>0</td><td/><td>1042400183</td></row>
-		<row><td>ID_STRING3</td><td>1033</td><td>SomeSoft</td><td>0</td><td/><td>1042400183</td></row>
+		<row><td>ID_STRING2</td><td>1033</td><td>https://github.com/Luden/Vestbi</td><td>0</td><td/><td>1176575168</td></row>
+		<row><td>ID_STRING3</td><td>1033</td><td>SomeSoft</td><td>0</td><td/><td>1176569024</td></row>
 		<row><td>ID_STRING4</td><td>1033</td><td>Launch |Built</td><td>0</td><td/><td>505538944</td></row>
 		<row><td>ID_STRING5</td><td>1033</td><td>Vestbi</td><td>0</td><td/><td>1042383413</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>1033</td><td>This feature will remain uninstalled.</td><td>0</td><td/><td>371320311</td></row>
@@ -4015,7 +4012,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{29CB78DB-2FA8-4E39-884E-DFEC0DF14645}</td></row>
 		<row><td>ISUSSignature</td><td>{1FF86630-485E-4E6D-90FA-516216271063}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewAppV,viewRealSetupDesign,viewSetupDesign,viewSetupTypes,viewUpdateService,viewShortcuts,viewRegistry,viewIniFiles,viewTextFiles,viewXMLConfig,viewUI,viewBillboards,viewTextMessages,viewSystemSearch,viewInstallScriptStd,viewCustomActions,viewSupportFiles,viewRelease,viewDesignPatches,viewISToday,viewAppFiles,viewFeatureFiles</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewAppV,viewRealSetupDesign,viewSetupDesign,viewSetupTypes,viewUpdateService,viewShortcuts,viewRegistry,viewIniFiles,viewTextFiles,viewXMLConfig,viewUI,viewBillboards,viewTextMessages,viewSystemSearch,viewInstallScriptStd,viewCustomActions,viewSupportFiles,viewRelease,viewDesignPatches,viewISToday,viewAppFiles,viewFeatureFiles,viewObjects</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
