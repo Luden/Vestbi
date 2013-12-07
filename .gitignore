@@ -1,6 +1,9 @@
 Installer\Installer\
+Installer\Installer\*
 MefScriptInterface\bin\
-MefScriptInterface\obj\
-Vestbi\Vestbi\bin\
-Vestbi\Vestbi\obj\
-Vestbi\Vestbi\Vestbi.csproj.user
+MefScriptInterface\bin\*
+*\obj\
+*\obj\*
+*\bin\*
+\bin\*
+*.csproj.user
