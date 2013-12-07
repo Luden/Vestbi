@@ -3,3 +3,4 @@ MefScriptInterface/bin/
 */obj/
 */bin/
 *.csproj.user
+*.suo

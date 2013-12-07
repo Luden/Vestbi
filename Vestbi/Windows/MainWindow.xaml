@@ -110,9 +110,9 @@
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="TbTranslate" Height="16" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14" FontFamily="Myriad Pro" AllowDrop="True" Padding="-1,2,0,0" RenderTransformOrigin="0.064,0.654" Cursor="Arrow" MouseDown="TextBox_MouseDown_1" Focusable="False" Margin="0,0,14,0" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1"/>
                         <TextBlock Text="FROM" Grid.Column="1" Margin="0,1,0,0"  FontSize="16" Foreground="#FF7D7D7A" HorizontalAlignment="Left" Width="214"/>
-                        <TextBox x:Name="TbTranslateFrom" Height="23" VerticalAlignment="Top" Grid.Column="1" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1" Margin="54,0,0,0" HorizontalAlignment="Left" Width="40"/>
-                        <TextBlock Text="TO" Grid.Column="1" Margin="104,1,0,0"  FontSize="16" Foreground="#FF7D7D7A" HorizontalAlignment="Left" Width="24"/>
-                        <TextBox x:Name="TbTranslateTo" Height="23" VerticalAlignment="Top" Grid.Column="1" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1" Margin="135,0,0,0" HorizontalAlignment="Left" Width="40"/>
+                        <TextBox x:Name="TbTranslateFrom" Height="23" VerticalAlignment="Top" Grid.Column="1" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1" Margin="56,0,0,0" HorizontalAlignment="Left" Width="40"/>
+                        <TextBlock Text="TO" Grid.Column="1" Margin="109,0,0,1"  FontSize="16" Foreground="#FF7D7D7A" HorizontalAlignment="Left" Width="24"/>
+                        <TextBox x:Name="TbTranslateTo" Height="23" VerticalAlignment="Top" Grid.Column="1" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1" Margin="142,0,0,0" HorizontalAlignment="Left" Width="40"/>
                     </Grid>                    
                     <Grid Margin="146,96,12,0" VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>

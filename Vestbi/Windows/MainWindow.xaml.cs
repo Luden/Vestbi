@@ -332,9 +332,11 @@ namespace Vestbi
 
         ContextMenu CreateContextMenu(Button placement, params PropertyBinder[] options)
         {
+            // all alignments - pure magic
+
             var size = Helpers.MeasureString(options.OrderByDescending(s => s.Name.Length).First().Name, new TextBlock());
             var height = options.Count() * (size.Height + 10) + 16;
-            var width = size.Width + 80;
+            var width = size.Width + 66;
 
             var menu = new ContextMenu();
 
@@ -344,8 +346,7 @@ namespace Vestbi
             menu.PlacementTarget = placement;
             menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Absolute;
             var location = placement.PointToScreen(new Point(0, 0));
-            menu.PlacementRectangle = new System.Windows.Rect(location.X + placement.Width - width + 5, location.Y + placement.Height - 5,
-                width, height);
+            
 
             foreach (var option in options)
             {
@@ -354,11 +355,8 @@ namespace Vestbi
                     var curOption = option as PropertyBinder<bool>;
                     var textblock = new TextBlock();
                     textblock.Text = curOption.Name;
-                    textblock.Margin = new Thickness(0, -2, 0, 0);
 
                     var checkbox = new CheckBox();
-                    checkbox.FlowDirection = FlowDirection.RightToLeft;
-                    checkbox.Content = textblock;
                     checkbox.IsChecked = curOption.Getter();
                     var handler = new RoutedEventHandler((o, e) =>
                     {
@@ -366,10 +364,18 @@ namespace Vestbi
                     });
                     checkbox.Checked += handler;
                     checkbox.Unchecked += handler;
+                    checkbox.Margin = new Thickness(6, 0, 0, 0);
+
+                    var stack = new StackPanel();
+                    stack.HorizontalAlignment = HorizontalAlignment.Right;
+                    stack.Orientation = Orientation.Horizontal;
+                    stack.Children.Add(textblock);
+                    stack.Children.Add(checkbox);
+                    stack.Margin = new Thickness(0, 0, -15, 0);
 
                     var item = new MenuItem();
                     item.StaysOpenOnClick = true;
-                    item.Header = checkbox;
+                    item.Header = stack;
                     item.Click += new RoutedEventHandler((o, e) =>
                     {
                         checkbox.IsChecked = !checkbox.IsChecked;
@@ -377,7 +383,49 @@ namespace Vestbi
 
                     menu.Items.Add(item);
                 }
+                else if (option.Type == typeof(Encoding))
+                {
+                    var curOption = option as PropertyBinder<Encoding>;
+                    
+                    var textblock = new TextBlock();
+                    textblock.Text = curOption.Name;
+                    textblock.Margin = new Thickness(0, -2, 0, 0);
+                    textblock.TextAlignment = TextAlignment.Right;
+
+                    var combobox = new ComboBox();
+                    foreach (var encoding in Encoding.GetEncodings())
+                    {
+                        var item = new ComboBoxItem();
+                        item.Content = encoding.Name;
+                        item.HorizontalContentAlignment = HorizontalAlignment.Right;
+                        combobox.Items.Add(item);
+                        if (encoding.Name == curOption.Getter().HeaderName)
+                            combobox.SelectedIndex = combobox.Items.Count - 1;
+                    }
+                    combobox.SelectionChanged += (o, e) =>
+                        {
+                            curOption.Setter(Encoding.GetEncoding((combobox.SelectedItem as ComboBoxItem).Content.ToString()));
+                        };
+                    combobox.HorizontalContentAlignment = HorizontalAlignment.Right;
+                    combobox.Width = 120;
+                    combobox.Margin = new Thickness(0, 6, 0, 0);
+
+                    var stack = new StackPanel();
+                    stack.HorizontalAlignment = HorizontalAlignment.Right;
+                    stack.Children.Add(textblock);
+                    stack.Children.Add(combobox);
+                    stack.Margin = new Thickness(0, 0, -9, 0);
+
+                    var menuItem = new MenuItem();
+                    menuItem.StaysOpenOnClick = true;
+                    menuItem.Header = stack;
+                    menu.Items.Add(menuItem);
+                    height += 20;
+                }
             }
+
+            menu.PlacementRectangle = new System.Windows.Rect(location.X + placement.Width - width + 5, location.Y + placement.Height - 5,
+                width, height);
 
             menu.IsOpen = true;
             menu.Width = width;
@@ -506,13 +554,24 @@ namespace Vestbi
             {
                 _optionsShown = true;
                 FadeRect.Visibility = Visibility.Visible;
-                this.ContextMenu = CreateContextMenu(sender as Button, 
+                this.ContextMenu = CreateContextMenu(sender as Button,
+                    new PropertyBinder<bool>("Ask if no text selected", o => ProgramSettings.Current.cmdAsk = o, () => ProgramSettings.Current.cmdAsk),
                     new PropertyBinder<bool>("Hide window", o => ProgramSettings.Current.cmdHide = o, () => ProgramSettings.Current.cmdHide),
                     new PropertyBinder<bool>("Wait completion", o => ProgramSettings.Current.cmdWait = o, () => ProgramSettings.Current.cmdWait),
                     new PropertyBinder<bool>("Copy to clipboard", o => ProgramSettings.Current.cmdCopyToClipboard = o, () => ProgramSettings.Current.cmdCopyToClipboard),
                     new PropertyBinder<bool>("Paste results", o => ProgramSettings.Current.cmdPasteToOutput = o, () => ProgramSettings.Current.cmdPasteToOutput),
-                    new PropertyBinder<bool>("Show results", o => ProgramSettings.Current.cmdPopResults = o, () => ProgramSettings.Current.cmdPopResults)
-                    );
+                    new PropertyBinder<bool>("Show results", o => ProgramSettings.Current.cmdPopResults = o, () => ProgramSettings.Current.cmdPopResults),
+                    new PropertyBinder<Encoding>("Results encoding", o => ProgramSettings.Current.cmdEncoding = o.HeaderName,
+                        () => 
+                            {
+                                try 
+                                { 
+                                    return Encoding.GetEncoding(ProgramSettings.Current.cmdEncoding);
+                                } 
+                                catch (Exception ex) 
+                                { return Encoding.Default;}
+                            }
+                    ));
             }
         }
 
@@ -549,6 +608,7 @@ namespace Vestbi
                 _optionsShown = true;
                 FadeRect.Visibility = Visibility.Visible;
                 this.ContextMenu = CreateContextMenu(sender as Button,
+                    new PropertyBinder<bool>("Ask if no text selected", o => ProgramSettings.Current.bScriptAsk = o, () => ProgramSettings.Current.bScriptAsk),
                     new PropertyBinder<bool>("Copy to clipboard", o => ProgramSettings.Current.bScriptCopyToClipboard = o, () => ProgramSettings.Current.bScriptCopyToClipboard),
                     new PropertyBinder<bool>("Paste results", o => ProgramSettings.Current.bScriptPasteToOutput = o, () => ProgramSettings.Current.bScriptPasteToOutput),
                     new PropertyBinder<bool>("Pop results", o => ProgramSettings.Current.bScriptPopResults = o, () => ProgramSettings.Current.bScriptPopResults)

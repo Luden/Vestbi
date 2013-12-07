@@ -149,7 +149,7 @@ namespace Vestbi
         {
             string str = "";
             var success = GetSelectedText(ref str);
-            if (!success && !Popup.ShowDialog(ref str))
+            if (!success && (ProgramSettings.Current.cmdAsk && !Popup.ShowDialog(ref str)))
                 return;
 
             string output = "";
@@ -175,16 +175,17 @@ namespace Vestbi
                 p.StartInfo.FileName = name;
                 p.StartInfo.Arguments = args;
                 p.StartInfo.UseShellExecute = false;
+                p.StartInfo.StandardOutputEncoding = Encoding.GetEncoding("CP866");
 
                 if (ProgramSettings.Current.cmdHide)
                     p.StartInfo.CreateNoWindow = true;
-                
-                if (ProgramSettings.Current.cmdCopyToClipboard || ProgramSettings.Current.cmdPasteToOutput)
+
+                if (ProgramSettings.Current.cmdCopyToClipboard || ProgramSettings.Current.cmdPasteToOutput || ProgramSettings.Current.cmdPopResults)
                     p.StartInfo.RedirectStandardOutput = true;
                 
                 p.Start();
 
-                if (ProgramSettings.Current.cmdCopyToClipboard || ProgramSettings.Current.cmdPasteToOutput)
+                if (ProgramSettings.Current.cmdCopyToClipboard || ProgramSettings.Current.cmdPasteToOutput || ProgramSettings.Current.cmdPopResults)
                 {
                     output = p.StandardOutput.ReadToEnd();
 
@@ -306,7 +307,7 @@ namespace Vestbi
         {
             string str = "";
             var success = GetSelectedText(ref str);
-            if (!success && !Popup.ShowDialog(ref str))
+            if (!success && (ProgramSettings.Current.bScriptAsk && !Popup.ShowDialog(ref str)))
                 return;
 
             try

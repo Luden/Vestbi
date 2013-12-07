@@ -58,6 +58,8 @@ namespace Vestbi
         public string kRun;
         [XmlElement(ElementName = "Run_Command_line")]
         public string cmd;
+        [XmlElement(ElementName = "Run_results_encoding")]
+        public string cmdEncoding;
         [XmlElement(ElementName = "Run_hide_window")]
         public bool cmdHide;
         [XmlElement(ElementName = "Run_wait_completion")]
@@ -68,6 +70,8 @@ namespace Vestbi
         public bool cmdPasteToOutput;
         [XmlElement(ElementName = "Run_pop_results")]
         public bool cmdPopResults;
+        [XmlElement(ElementName = "Run_ask_if_no_text_selected")]
+        public bool cmdAsk;
 
         [XmlElement(ElementName = "Script_key")]
         public string kScript;
@@ -87,6 +91,8 @@ namespace Vestbi
         public string scriptAssemblyPath;
         [XmlElement(ElementName = "Script_compiler_params")]
         public string scriptCompilerParams;
+        [XmlElement(ElementName = "Script_ask_if_no_text_selected")]
+        public bool bScriptAsk;
 
         [XmlIgnore]
         public static ProgramSettings Current = new ProgramSettings();
@@ -130,11 +136,13 @@ namespace Vestbi
                     Current.appendFile = "log.txt";
                     Current.bEncodeUrl = true;
                     Current.cmd = "notepad log.txt";
+                    Current.cmdEncoding = "windows-1251";
                     Current.cmdCopyToClipboard = false;
                     Current.cmdPasteToOutput = false;
                     Current.cmdPopResults = false;
                     Current.cmdWait = false;
                     Current.cmdHide = false;
+                    Current.cmdAsk = true;
                     Current.lngTranslateFrom = "en";
                     Current.lngTranslateTo = "ru";
                     Current.regexFrom = "#(\\d+)\\:\\s(.*)";
@@ -152,6 +160,7 @@ namespace Vestbi
                     Current.bScriptCopyToClipboard = true;
                     Current.bScriptPasteToOutput = true;
                     Current.bScriptPopResults = true;
+                    Current.bScriptAsk = true;
                     Save();
                     MessageBlob.ShowPopup("Settings file restored");
                 }
