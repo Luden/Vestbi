@@ -1,0 +1,32 @@
+﻿<Controls:MetroWindow x:Class="Vestbi.MessageBlob"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="INFO" Height="300" Width="300" 
+        Loaded="MetroWindow_Loaded_1" Closing="MetroWindow_Closing_1" ShowActivated="False"
+          ShowTitleBar="False" ShowCloseButton="False" ShowMaxRestoreButton="False" ShowMinButton="False" MouseDown="MetroWindow_MouseDown_1"  MouseEnter="MetroWindow_MouseEnter_1" MouseLeave="MetroWindow_MouseLeave_1"
+        ShowInTaskbar="False" Topmost="True" WindowStyle="None" >
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <VisualBrush x:Key="Brush1" Stretch="Fill" />
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Controls:MetroWindow.GlowBrush>
+        <SolidColorBrush Color="{DynamicResource AccentColor}"/>
+    </Controls:MetroWindow.GlowBrush>
+
+    <Grid Margin="-3,-3,-3,-3">
+        
+        <TextBlock x:Name="TbMessage" Margin="10,-15,10,10" TextWrapping="Wrap" Text="TextBlock" FontSize="18" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        
+
+    </Grid>
+</Controls:MetroWindow>

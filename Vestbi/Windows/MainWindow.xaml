@@ -1,0 +1,233 @@
+﻿<Controls:MetroWindow
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:CodeCompletion="clr-namespace:ICSharpCode.CodeCompletion;assembly=ICSharpCode.CodeCompletion"  x:Class="Vestbi.MainWindow"
+                       AllowsTransparency="True"
+                       ContextMenuOpening="MetroWindow_ContextMenuOpening_1"
+        Title="VERSATILE STUFF BINDER" Height="286" Width="510" Icon="/Resources/icon.ico" Background="#FF1C1C1C" WindowStartupLocation="CenterScreen" Closing="MetroWindow_Closing_1" StateChanged="MetroWindow_StateChanged_1" Loaded="MetroWindow_Loaded_1" SizeChanged="MetroWindow_SizeChanged_1" MinWidth="510" MinHeight="260" ShowIconOnTitleBar="False">
+    <Controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Controls:MetroWindow.Resources>
+    
+    <Controls:MetroWindow.GlowBrush>
+        <SolidColorBrush Color="{DynamicResource AccentColor}"/>
+    </Controls:MetroWindow.GlowBrush>
+    
+            <Controls:MetroWindow.WindowCommands>
+        <Controls:WindowCommands>
+            <Button Name="BtnUpdate" Click="UpdateButtonClick" FontSize="12" ToolTip="What are you waiting? Click!" Content="NEW VERSION AVAILABLE!" VerticalContentAlignment="Center" TextOptions.TextHintingMode="Animated" Visibility="Collapsed"/>
+            <Button Click="AccentSelectorClick"  FontFamily="Microsoft Sans Serif" FontSize="22"  Content="◐" ToolTip="Color" RenderTransformOrigin="0.5,0.5" Opacity="0.5" Width="40">
+                <Button.ContextMenu>
+                    <ContextMenu MouseLeave="AccentMenuMouseLeave">
+                        <MenuItem Click="ClickThemeMenuItem" Background="#FFA6A5A5" StaysOpenOnClick="True">
+                            <MenuItem.Header>
+                                <RadioButton Name="RbThemeDark"  Checked="ChangeTheme" Content="Dark" IsChecked="True" GroupName="RbThemeGrp"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Click="ClickThemeMenuItem" Background="#FFE6E2E2" StaysOpenOnClick="True">
+                            <MenuItem.Header>
+                                <RadioButton Name="RbThemeLight" Checked="ChangeTheme" Content="Light" GroupName="RbThemeGrp"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Blue" Background="#FF119EDA"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Red" Background="#FFE51400"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Green" Background="#FF60A917"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Orange" Background="#FFFA6800"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Purple" Background="#FFb400ff"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Lime" Background="#FFA4C400"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Emerald" Background="#FF008A00"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Teal" Background="#FF00ABA9"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Cyan" Background="#FF1BA1E2"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Cobalt" Background="#FF0050EF"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Indigo" Background="#FF6A00FF"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Violet" Background="#FFAA00FF"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Pink" Background="#FFF472D0"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Magenta" Background="#FFD80073"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Crimson" Background="#FFA20025"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Amber" Background="#FFF0A30A"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Yellow" Background="#FFE6C800"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Brown" Background="#FF825A2C"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Olive" Background="#FF6D8764"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Steel" Background="#FF647687"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Mauve" Background="#FF76608A"/>
+                        <MenuItem Click="ChangeAccent" MouseEnter="AccentButtonMouseEnter" Header="Sienna" Background="#FFA0522D"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.WindowCommands>
+
+    
+    <Grid Name="MainGrid">
+        <Controls:MetroAnimatedSingleRowTabControl x:Name="Tabs" TabStripPlacement="Bottom" TabStripMargin="0,212,0,0" SelectionChanged="Tabs_SelectionChanged_1">
+
+            <TabItem Header="BASIC" Name="TabBasic">
+                <Grid>
+
+                    <TextBlock HorizontalAlignment="Left" Margin="66,58,0,0" TextWrapping="Wrap" Text="BROWSE" VerticalAlignment="Top" FontSize="16" Foreground="#FF7D7D7A"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="45,138,0,0" TextWrapping="Wrap" Text="TRANSLATE" VerticalAlignment="Top" FontSize="16" Foreground="#FF7D7D7A"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="95,17,0,0" TextWrapping="Wrap" Text="RUN" VerticalAlignment="Top" FontSize="16" Foreground="#FF7D7D7A"/>
+                    <TextBox x:Name="TbHidden" HorizontalAlignment="Left" Height="23" Margin="12,12,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="4" LostFocus="TbHidden_LostFocus" Opacity="0" PreviewKeyDown="TbHidden_PreviewKeyDown"/>
+                    <Grid Margin="146,16,12,0" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" MinWidth="130"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TbRun" Height="26" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14" FontFamily="Myriad Pro" AllowDrop="True" Padding="-1,2,0,0" RenderTransformOrigin="0.064,0.654" Cursor="Arrow" MouseDown="TextBox_MouseDown_1" BorderThickness="1" Focusable="False" TextChanged="TbRun_TextChanged" Margin="0,0,14,0" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1"/>
+                        <TextBox x:Name="TbCmd" Height="26" VerticalAlignment="Top" Grid.Column="1" Margin="0,0,41,0" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1"/>
+                        <Button x:Name="BtnOptions2" Height="26" Width="26"  Padding="0" IsEnabled="True" Click="RunOptionsClick" Content="..."  Style="{StaticResource SquareButtonStyle}"
+                                    Grid.Column="1" BorderThickness="0" UseLayoutRounding="False" Background="#FF2F2F2F" HorizontalAlignment="Right" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalAlignment="Top"/>
+                    </Grid>
+
+                    <Grid Margin="146,56,12,0" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" MinWidth="130"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TbBrowse" Height="26" 
+        		TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14" FontFamily="Myriad Pro" AllowDrop="True" 
+        		Padding="-1,2,0,0" RenderTransformOrigin="0.064,0.654" Cursor="Arrow" MouseDown="TextBox_MouseDown_1" Focusable="False" Margin="0,0,14,0" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1"
+                 />
+                        <TextBox x:Name="TbUrl" Height="23" VerticalAlignment="Top" Grid.Column="1" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1" Margin="0,0,40,0"/>
+                        <Button x:Name="BtnOptions3" Height="26" Width="26"  Padding="0" IsEnabled="True" Click="BrowseOptionsClick" Content="..."  Style="{StaticResource SquareButtonStyle}"
+            	Grid.Column="1" BorderThickness="0" UseLayoutRounding="False" Background="#FF2F2F2F" HorizontalAlignment="Right" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalAlignment="Top"/>
+                    </Grid>
+                    <Grid Margin="146,136,12,0" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" MinWidth="130"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TbTranslate" Height="16" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14" FontFamily="Myriad Pro" AllowDrop="True" Padding="-1,2,0,0" RenderTransformOrigin="0.064,0.654" Cursor="Arrow" MouseDown="TextBox_MouseDown_1" Focusable="False" Margin="0,0,14,0" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1"/>
+                        <TextBlock Text="FROM" Grid.Column="1" Margin="0,1,0,0"  FontSize="16" Foreground="#FF7D7D7A" HorizontalAlignment="Left" Width="214"/>
+                        <TextBox x:Name="TbTranslateFrom" Height="23" VerticalAlignment="Top" Grid.Column="1" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1" Margin="54,0,0,0" HorizontalAlignment="Left" Width="40"/>
+                        <TextBlock Text="TO" Grid.Column="1" Margin="104,1,0,0"  FontSize="16" Foreground="#FF7D7D7A" HorizontalAlignment="Left" Width="24"/>
+                        <TextBox x:Name="TbTranslateTo" Height="23" VerticalAlignment="Top" Grid.Column="1" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1" Margin="135,0,0,0" HorizontalAlignment="Left" Width="40"/>
+                    </Grid>                    
+                    <Grid Margin="146,96,12,0" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" MinWidth="130"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TbAppend" Height="26" 
+                		TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14" FontFamily="Myriad Pro" AllowDrop="True" 
+                		Padding="-1,2,0,0" RenderTransformOrigin="0.064,0.654" Cursor="Arrow" MouseDown="TextBox_MouseDown_1" Focusable="False" Margin="0,0,14,0" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1"/>
+                        <TextBox x:Name="TbFile" Height="23" VerticalAlignment="Top" Grid.Column="1" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalScrollBarVisibility="Disabled" MaxLines="1" Margin="0,0,40,0"/>                        
+                    </Grid>
+                    <TextBlock HorizontalAlignment="Left" Margin="12,98,0,0" TextWrapping="Wrap" Text="APPEND TO FILE" VerticalAlignment="Top" FontSize="16" Foreground="#FF7D7D7A"/>
+                    <TextBlock Name="TbCopyleft" HorizontalAlignment="Left" Margin="8,0,0,0" TextWrapping="Wrap" Text="©" VerticalAlignment="Top" FontSize="48" 
+                               FontFamily="Microsoft Sans Serif" RenderTransformOrigin="0.5,0.5" Opacity="0.01" 
+                               MouseEnter="TextBlock_MouseEnter_1" MouseLeave="TextBlock_MouseLeave_1" MouseDown="CopyleftMousedown">
+                        <TextBlock.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1" ScaleX="-1"/>
+                                <SkewTransform AngleY="0" AngleX="0"/>
+                                <RotateTransform Angle="0"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+
+                    <Grid Name="GridOptions"  HorizontalAlignment="Left" Margin="-197,0,0,0" Width="192" Background="{DynamicResource WindowBackgroundBrush}">
+
+                        <Button  Style="{StaticResource SquareButtonStyle}" x:Name="BtnOptions" Focusable="False" Content="OPTIONS" Click="BtnOptionsClick"
+        	MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" Margin="0,0,-22,39" Background="{DynamicResource WindowTitleColorBrush}"
+        	HorizontalContentAlignment="Left" VerticalContentAlignment="Top" FontFamily="Segoe UI" FontWeight="Normal" Padding="11,0,0,0" Opacity="1" HorizontalAlignment="Right" Width="63" Height="30" VerticalAlignment="Bottom">
+                            <Button.LayoutTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="90"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.LayoutTransform>
+                        </Button>
+
+                        <Border BorderThickness="0,0,1,0" BorderBrush="{DynamicResource WindowTitleColorBrush}">
+                            <StackPanel Name="PanelOptions"  HorizontalAlignment="Left" Width="165" Margin="27,0,0,0" Background="{DynamicResource WindowBackgroundBrush}">
+                                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="settings" VerticalAlignment="Top" FontSize="22" Foreground="#FF7D7D7A" Margin="12,0,0,0"/>
+                                <CheckBox Name="CbAutostart" Content="Start with windows" Margin="10,10,0,0"/>
+                                <CheckBox Name="CbMinimized" Content="Start minimized" Margin="10,10,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Rectangle Margin="0,0,-1,40" Fill="{DynamicResource WindowBackgroundBrush}" Height="61" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="3"></Rectangle>
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="ADVANCED" Name="TabAdvanced">
+                <Grid>
+                    <Grid Margin="94,55,10,73">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="126"/>
+                            <ColumnDefinition MinWidth="126"/>
+                        </Grid.ColumnDefinitions>
+                        <GridSplitter HorizontalAlignment="left" VerticalAlignment="Stretch" Width="5" Grid.Column="1"  Margin="-5,0,0,0" Grid.RowSpan="1" ResizeDirection="Columns" Background="{DynamicResource WindowTitleColorBrush}"/>
+                        <TextBox x:Name="TbRegexFrom" TextWrapping="Wrap" Margin="0,0,10,0" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" FontFamily="Consolas" FontSize="14"/>
+                        <TextBox x:Name="TbRegexTo" Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" FontFamily="Consolas" FontSize="14"/>
+                    </Grid>
+                    <Grid Margin="94,14,10,0" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" MinWidth="130"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TbRegex" Height="26" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14" FontFamily="Myriad Pro" AllowDrop="True" Padding="-1,2,0,0" RenderTransformOrigin="0.064,0.654" Cursor="Arrow" MouseDown="TextBox_MouseDown_1" Focusable="False" Margin="0,0,14,0" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1"/>
+                        <Button x:Name="BtnRegexOptions" Height="26" Width="26"  Padding="0" IsEnabled="True" Click="RegexOptionsClick" Content="..."  Style="{StaticResource SquareButtonStyle}"
+                        	Grid.Column="1" BorderThickness="0" UseLayoutRounding="False" Background="#FF2F2F2F" HorizontalAlignment="Right" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalAlignment="Top"/>
+                    </Grid>
+                    <TextBlock HorizontalAlignment="Left" Margin="34,16,0,0" TextWrapping="Wrap" Text="REGEX" VerticalAlignment="Top" FontSize="16" Foreground="#FF7D7D7D"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="12,55,0,0" TextWrapping="Wrap" Text="SEARCH REPLACE PATTERN" VerticalAlignment="Top" FontSize="16" Width="68" RenderTransformOrigin="0.353,0.846" TextAlignment="Right" Foreground="#FF7D7D7D"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="PROFESSIONAL" Name="TabProfessional">
+                <Grid>
+                    <Grid Margin="77,14,14,0" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" MinWidth="130"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TbScript" Height="16" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="14" FontFamily="Myriad Pro" AllowDrop="True" Padding="-1,2,0,0" RenderTransformOrigin="0.064,0.654" Cursor="Arrow" MouseDown="TextBox_MouseDown_1" Focusable="False" Margin="0,0,14,0" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1"/>
+                        <Button x:Name="BtnScriptOptions" Height="26" Width="26"  Padding="0" IsEnabled="True" Click="ScriptOptionsClick" Content="..."  Style="{StaticResource SquareButtonStyle}"
+                        	Grid.Column="1" BorderThickness="0" UseLayoutRounding="False" Background="#FF2F2F2F" HorizontalAlignment="Right" MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" VerticalAlignment="Top"/>
+                        <Button x:Name="BtnBuild" Focusable="False" Content="BUILD F5" Click="ButtonBuildClick" 
+                        	MouseEnter="Button_MouseEnter_1" MouseLeave="Button_MouseLeave_1" Background="{DynamicResource WindowTitleColorBrush}" FontFamily="Segoe UI" FontSize="14" FontWeight="Normal" BorderThickness="0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="98" Grid.Column="1" Padding="0,4,0,6"/>
+                    </Grid>
+                    <TextBlock HorizontalAlignment="Left" Margin="13,16,0,0" TextWrapping="Wrap" Text="SCRIPT" VerticalAlignment="Top" FontSize="16" Foreground="#FF7D7D7A"/>
+                    <Rectangle Margin="13,54,13,58" Stroke="#FF7D7D7D">
+                    </Rectangle>
+                    <CodeCompletion:CodeTextEditor
+            		x:Name="CodeEditor"
+            		FontFamily="Consolas"
+            		FontSize="14"
+            
+            
+            		Margin ="14,55,14,61" Foreground="#FF9BADAE" KeyDown="CodeEditor_KeyDown" />
+                    
+                </Grid>
+            </TabItem>
+        </Controls:MetroAnimatedSingleRowTabControl>
+        <Button x:Name="BtnOk" Focusable="False" Content=" OK" Click="Button_Click_2" 
+                MouseEnter="MainButton_MouseEnter" MouseLeave="MainButton_MouseLeave" Margin="0,0,-40,-4" Background="{DynamicResource WindowTitleColorBrush}"
+                HorizontalContentAlignment="Left" VerticalContentAlignment="Top" FontFamily="Segoe UI" FontSize="24" FontWeight="Normal" BorderThickness="0" 
+                Height="47" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="94">
+        </Button>
+        <Rectangle x:Name="FadeRect" Margin="0,0,0,0" Stroke="Black" Visibility="Hidden">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="Black" Opacity="0.7"/>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Grid>
+</Controls:MetroWindow>

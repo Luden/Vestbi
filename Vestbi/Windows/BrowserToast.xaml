@@ -1,0 +1,37 @@
+﻿<Controls:MetroWindow x:Class="Vestbi.BrowserToast"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
+        ShowInTaskbar="False" WindowStyle="None"  ShowActivated="False"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        Closing="WndToast_Closing" Loaded="WndToast_Loaded" MouseMove="WndToast_MouseMove" MouseEnter="WndToast_MouseEnter" MouseLeave="WndToast_MouseLeave"
+        Title="BrowserToast" Height="300" Width="300" ShowMinButton="False" ShowMaxRestoreButton="False">
+
+    <Controls:MetroWindow.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <VisualBrush x:Key="Brush1" Stretch="Fill" />
+        </ResourceDictionary>
+    </Controls:MetroWindow.Resources>
+
+    <Controls:MetroWindow.GlowBrush>
+        <SolidColorBrush Color="{DynamicResource AccentColor}"/>
+    </Controls:MetroWindow.GlowBrush>
+
+    <i:Interaction.Behaviors>
+        <behaviours:BorderlessWindowBehavior ResizeWithGrip="True" AllowsTransparency="False" />
+    </i:Interaction.Behaviors>
+    
+    <Grid>
+        <WebBrowser Opacity="1"  x:Name="Browser" Margin="0"/>
+    </Grid>
+</Controls:MetroWindow>
