@@ -114,13 +114,6 @@ namespace Vestbi
                 return;
             }
 
-            if (!ProgramSettings.Current.GuideShown)
-            {
-                ProgramSettings.Current.GuideShown = true;
-                var guide = new Guide();
-                guide.ShowDialog();
-            }
-
             //int index = 0;
             //foreach (var br in Resources.MergedDictionaries[0].Values)
             //{
@@ -627,6 +620,14 @@ namespace Vestbi
             _allowSizeAnim = true;
 
             this.Opacity = 0;
+
+            if (!ProgramSettings.Current.GuideShown)
+            {
+                ProgramSettings.Current.GuideShown = true;
+                var guide = new Guide();
+                guide.ShowDialog();
+            }
+
             var opAnim = new DoubleAnimation(0, 1, (Duration)TimeSpan.FromSeconds(0.5));
             this.BeginAnimation(Window.OpacityProperty, opAnim);
         }

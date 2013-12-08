@@ -114,6 +114,7 @@ namespace Vestbi
             this.BeginAnimation(Window.TopProperty, slideAnimTop, HandoffBehavior.SnapshotAndReplace);
 
             this.Width = w;
+            this.Left = corner.X - w;
 
             var slideAnimHeight = new DoubleAnimation(this.Height, h, (Duration)TimeSpan.FromSeconds(0.2));
             slideAnimHeight.EasingFunction = new BackEase() { EasingMode = EasingMode.EaseOut };
@@ -185,7 +186,7 @@ namespace Vestbi
                 var w = int.Parse(width);
                 var h = int.Parse(height);
 
-                ((BrowserToast)_wnd).FadeIn(w, h + 150);
+                ((BrowserToast)_wnd).FadeIn(w > 400 ? 400 : w, h + 150);
             }
         }
 
