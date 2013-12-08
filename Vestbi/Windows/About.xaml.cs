@@ -38,7 +38,7 @@ namespace Vestbi
             ThemeManager.ChangeTheme(this, currentAccent, currentTheme);
 
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
-            TbVersion.Text = String.Format("VER {0}.{1}.{2}", ver.Major, ver.Minor, ver.MajorRevision);
+            TbVersion.Text = String.Format("VER {0}.{1}.{2}", ver.Major, ver.Minor, ver.Build);
 
             Resources["GrayBrush8"] = Resources["WindowTitleColorBrush"];
             Resources["GrayBrush5"] = Resources["HighlightBrush"];

@@ -58,7 +58,7 @@ namespace Vestbi
 
         public void Dispose()
         {
-            if(KListener != null && !KListener.IsDisposed());
+            if(KListener != null && !KListener.IsDisposed())
                 KListener.Dispose();
         }
 
