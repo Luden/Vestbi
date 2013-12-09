@@ -181,7 +181,6 @@ namespace Vestbi
             {
                 KListener.KeyDown -= KListener_KeyDown;
                 KListener.KeyDown -= KListener_KeyUp;
-                KListener.Dispose();
 
                 _working = false;
                 _beforeMods.Clear();
@@ -198,6 +197,9 @@ namespace Vestbi
                     _tb = null;
                 }
             }
+
+            if (!KListener.IsDisposed())
+                KListener.Dispose();
         }
 
         /// <summary>

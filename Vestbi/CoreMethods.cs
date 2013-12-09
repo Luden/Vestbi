@@ -124,7 +124,7 @@ namespace Vestbi
 
                 Clipboard.Clear();
 
-                Clipboard.SetText(str);
+                Clipboard.SetDataObject(str);
                 System.Windows.Forms.SendKeys.SendWait("^v");
 
                 Clipboard.Clear();
@@ -193,7 +193,7 @@ namespace Vestbi
                         SetSelectedText(output);
 
                     if (ProgramSettings.Current.cmdCopyToClipboard)
-                        Clipboard.SetText(output);
+                        Clipboard.SetDataObject(output);
 
                     if (ProgramSettings.Current.cmdPopResults)
                         MessageBlob.ShowPopup(output);
@@ -291,7 +291,7 @@ namespace Vestbi
                     SetSelectedText(str);
 
                 if (ProgramSettings.Current.bRegexCopyToClipboard)
-                    Clipboard.SetText(str);
+                    Clipboard.SetDataObject(str);
 
                 if (ProgramSettings.Current.bRegexPopResults)
                     MessageBlob.ShowPopup(str);
@@ -318,7 +318,7 @@ namespace Vestbi
                     SetSelectedText(str);
 
                 if (ProgramSettings.Current.bScriptCopyToClipboard)
-                    Clipboard.SetText(str);
+                    Clipboard.SetDataObject(str);
 
                 if (ProgramSettings.Current.bScriptPopResults)
                     MessageBlob.ShowPopup(str);
