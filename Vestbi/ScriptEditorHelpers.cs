@@ -56,13 +56,13 @@ namespace Vestbi
             // then unload appdomain, so assembly file can be deleted and assembly can be rebuilded
             // slow. if performance needed - all domain-creation/type-binding code should be sepparated and called only once
 
-            if(!File.Exists(ProgramSettings.Current.scriptAssemblyPath))
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ProgramSettings.Current.scriptAssemblyPath);
+
+            if (!File.Exists(path))
                 return null;
 
             try
             {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ProgramSettings.Current.scriptAssemblyPath);
-
                 AppDomain domain = AppDomain.CreateDomain("ScriptDomain");
                 domain.SetData("context",  new DomainContext(path, value));
                 domain.DoCallBack(() => 

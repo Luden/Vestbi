@@ -55,11 +55,10 @@ namespace Vestbi
 
                 Clipboard.Clear();
 
-
                 System.Threading.Thread.Sleep(100);
+                
+                SendKeysRE.Send("^c");
 
-                System.Windows.Forms.SendKeys.SendWait("^c"); // ctrl+c in your face! it will destroy your console app, but I still dont care
-                System.Windows.Forms.SendKeys.SendWait("^c"); // whos dat dumbass who needs to be told twice?! opera! (actually its multithreading issue, again)
                 System.Threading.Thread.Sleep(100); // naive attemption to wait for app to response ctrl+c
 
                 for (int i = 0; i < 5; i++)
@@ -125,7 +124,8 @@ namespace Vestbi
                 Clipboard.Clear();
 
                 Clipboard.SetDataObject(str);
-                System.Windows.Forms.SendKeys.SendWait("^v");
+
+                SendKeysRE.Send("^v");
 
                 Clipboard.Clear();
 
@@ -235,15 +235,23 @@ namespace Vestbi
 
             try
             {
-                var fileName = ProgramSettings.Current.appendFile;
-                if(fileName == "" || !Uri.IsWellFormedUriString(fileName, UriKind.RelativeOrAbsolute))
+                if (ProgramSettings.Current.appendFile == "" || !Uri.IsWellFormedUriString(ProgramSettings.Current.appendFile, UriKind.RelativeOrAbsolute))
                 {
-                    fileName = "temp.txt";
-                    ProgramSettings.Current.appendFile = fileName;
+                    ProgramSettings.Current.appendFile = "temp.txt";
                 }
+                
+                var fileName = ProgramSettings.Current.appendFile;
+                if (!Uri.IsWellFormedUriString(fileName, UriKind.Absolute))
+                    fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
                 if(!File.Exists(fileName))
                     using (File.Create(fileName)) { }
+
+                if (ProgramSettings.Current.appendTimestamp)
+                    str = DateTime.Now.ToString(ProgramSettings.Current.appendTimestampFormat) + Environment.NewLine + str;
+
+                if (ProgramSettings.Current.appendDelimeter)
+                    str = ProgramSettings.Current.appendDelimeterFormat.Replace("\\n", Environment.NewLine) + str;
 
                 File.AppendAllText(fileName, str + Environment.NewLine);
 

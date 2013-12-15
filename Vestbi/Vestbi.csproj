@@ -88,7 +88,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="KeybEvent.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="SendKeysRE.cs" />
     <Compile Include="Windows\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
@@ -104,6 +106,7 @@
     <Resource Include="Resources\Slide1.png" />
     <Resource Include="Resources\Slide2.png" />
     <Resource Include="Resources\Slide3.png" />
+    <Resource Include="Resources\Slide5.png" />
     <Resource Include="Resources\Slide4.png" />
     <Content Include="Script\code.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

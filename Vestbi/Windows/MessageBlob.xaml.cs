@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,8 +29,29 @@ namespace Vestbi
             set { TbMessage.Text = value; }
         }
 
+        public string Url
+        {
+            set 
+            {
+                if (value == "")
+                {
+                    TbMessage.TextDecorations = null;
+                    TbMessage.Cursor = Cursors.Arrow;
+                }
+                else
+                {
+                    TbMessage.TextDecorations = TextDecorations.Underline;
+                    TbMessage.Cursor = Cursors.Hand;
+                    TbMessage.MouseDown += (o, e) =>
+                        {
+                            Process.Start(value);
+                        };
+                }
+            }
+        }
+
         DispatcherTimer timer = new DispatcherTimer();
-        int fadeSeconds = 2;
+        double fadeSeconds = 2;
 
         public MessageBlob()
         {
@@ -139,10 +161,12 @@ namespace Vestbi
             Width = w + 20;
         }
 
-        public static void ShowPopup(string message)
+        public static void ShowPopup(string message, double fadeTime = 2, string url = "")
         {
             var blob = new MessageBlob();
             blob.Text = message;
+            blob.fadeSeconds = fadeTime;
+            blob.Url = url;
             blob.Show();
         }
 

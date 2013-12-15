@@ -24,7 +24,7 @@ namespace Vestbi
     public partial class Guide : MetroWindow
     {
         int curSlide = 0;
-        int slidesCount = 4;
+        int slidesCount = 5;
 
         public static BitmapImage LoadBitmapFromResource(string pathInApplication, Assembly assembly = null)
         {

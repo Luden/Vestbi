@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -35,7 +36,6 @@ namespace Vestbi
         [XmlElement(ElementName = "Translate_url_pattern")]
         public string translateUrl;
 
-
         [XmlElement(ElementName = "Regex_key")]
         public string kRegex;
         [XmlElement(ElementName = "Regex_search_pattern")]
@@ -53,6 +53,14 @@ namespace Vestbi
         public string appendFile;
         [XmlElement(ElementName = "Append_key")]
         public string kAppend;
+        [XmlElement(ElementName = "Append_timestamp")]
+        public bool appendTimestamp = true;
+        [XmlElement(ElementName = "Append_timestamp_format")]
+        public string appendTimestampFormat = "dd MMMM yyyy";
+        [XmlElement(ElementName = "Append_delimeter")]
+        public bool appendDelimeter = true;
+        [XmlElement(ElementName = "Append_delimeter_format")]
+        public string appendDelimeterFormat = "\\n";
 
         [XmlElement(ElementName = "Run_key")]
         public string kRun;
@@ -72,7 +80,7 @@ namespace Vestbi
         public bool cmdPopResults;
         [XmlElement(ElementName = "Run_ask_if_no_text_selected")]
         public bool cmdAsk;
-
+        
         [XmlElement(ElementName = "Script_key")]
         public string kScript;
         [XmlElement(ElementName = "Script_file_name")]
@@ -117,7 +125,9 @@ namespace Vestbi
                     s.Serialize(writer, Current);
             }
             catch (System.Exception ex)
-            { }
+            {
+                MessageBlob.ShowPopup("Cannot save settings: " + ex.Message);
+            }
         }
 
         public static void Load()
@@ -134,8 +144,12 @@ namespace Vestbi
                     Current.Minimized = false;
                     Current.GuideShown = false;
                     Current.appendFile = "log.txt";
+                    Current.appendDelimeter = true;
+                    Current.appendDelimeterFormat = "\\n";
+                    Current.appendTimestamp = true;
+                    Current.appendTimestampFormat = "dd MMMM yyyy";
                     Current.bEncodeUrl = true;
-                    Current.cmd = "notepad log.txt";
+                    Current.cmd = "msg * {text}";
                     Current.cmdEncoding = "windows-1251";
                     Current.cmdCopyToClipboard = false;
                     Current.cmdPasteToOutput = false;

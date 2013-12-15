@@ -226,6 +226,11 @@ namespace Vestbi
             _working = true;
         }
 
+        public bool IsBindedTo(TextBox tb)
+        {
+            return _tb == tb;
+        }
+
         /// <summary>
         /// Converts string to list of modifiers and key
         /// </summary>

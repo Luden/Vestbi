@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using Microsoft.Win32;
 using Vestbi.Properties;
+using System.Security.Principal;
 namespace Vestbi
 {
     class Helpers
@@ -64,8 +65,16 @@ namespace Vestbi
             return dropShadowEffect;
         }
 
+        public static bool IsAdmin()
+        {
+            return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
         public static void MakeStartup(bool startup)
         {
+            //if (!IsAdmin())
+             //   return;
+            
             RegistryKey rkApp = Registry.CurrentUser.OpenSubKey(regKey, true);
 
             if (startup && !IsStartupItem())

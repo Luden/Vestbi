@@ -3,7 +3,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       WindowStartupLocation="CenterScreen"  ShowInTaskbar="False"
-                      ShowIconOnTitleBar="False" ShowMaxRestoreButton="False" ShowMinButton="False" 
+                      ShowIconOnTitleBar="False" ShowMaxRestoreButton="False" ShowMinButton="False" ShowCloseButton="False"
         Title="GUIDE" Height="410" Width="648">
 
     <Controls:MetroWindow.Resources>

@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
@@ -30,7 +31,6 @@ namespace Vestbi
 {
     public partial class MainWindow : MetroWindow
     {
-
         #region Properties helpers
 
         abstract class PropertyBinder
@@ -65,10 +65,21 @@ namespace Vestbi
 
         #endregion
 
+        #region Some hardcoded properties
+
+        const string _verUrl = "http://luden.github.io/Vestbi/Version";
+        const string _updUrl = "http://sourceforge.net/projects/vestbi/files/latest/download";
+        public static string VestbiTitle = "VERSATILE STUFF BINDER"; // used to FindWindow
+
+        #endregion
+
         #region Animation toggles and stuff
 
         bool _allowSizeAnim = false;
         bool _optionsShown = false;
+        bool _trayMessageShown = false;
+        bool _updateRequired = false;
+        bool _reallyClosing = false; // close only on certain buttons
         bool _programOptionsShown = false;
         Thickness originalMainButtonPos = new Thickness();
 
@@ -82,6 +93,7 @@ namespace Vestbi
         #endregion
 
         #region CTOR
+
         public MainWindow()
         {
             InitializeComponent();
@@ -107,6 +119,8 @@ namespace Vestbi
             BtnOk.Foreground = Brushes.White;
             BtnBuild.Foreground = Brushes.White;
 
+            Title = VestbiTitle;
+
             if (ProgramSettings.Current.Minimized)
             {
                 MakeBindings();
@@ -127,13 +141,23 @@ namespace Vestbi
             //    index++;
             //}
         }
+
         #endregion
         
         #region Methods
 
-        internal void CheckForUpdates()
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            var verUrl = "http://luden.github.io/Vestbi/Version";
+            System.Windows.Forms.Message m = System.Windows.Forms.Message.Create(hwnd, msg, wParam, lParam);
+            if (m.Msg == App.NativeMethods.WM_SHOWACTIVATE_VESTBI)
+            {
+                ShowActivate();
+            }
+            return IntPtr.Zero;
+        }
+
+        internal void CheckForUpdates()
+        {   
             WebClient client = new WebClient();
             client.DownloadStringCompleted += new DownloadStringCompletedEventHandler((o, e) =>
             {
@@ -150,12 +174,14 @@ namespace Vestbi
                         if (majVer > ver.Major || (majVer == ver.Major && minVer > ver.Minor))
                         {
                             BtnUpdate.Visibility = Visibility.Visible;
+                            _updateRequired = true;
+                            MessageBlob.ShowPopup("New version available!", 10, _updUrl);
                         }
                     }
                 }
             });
             WebRequest.DefaultWebProxy = null; // stupid lag
-            client.DownloadStringAsync(new Uri(verUrl));
+            client.DownloadStringAsync(new Uri(_verUrl));
         }
 
         string GetKeyString(ModifierKeys mods, System.Windows.Forms.Keys key)
@@ -282,7 +308,16 @@ namespace Vestbi
             ProgramSettings.Current.Autostart = CbAutostart.IsChecked ?? false;
             ProgramSettings.Current.Minimized = CbMinimized.IsChecked ?? false;
 
-            CodeEditor.Save(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ProgramSettings.Current.scriptFile));
+            var scriptFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ProgramSettings.Current.scriptFile);
+            
+            try
+            {
+                CodeEditor.Save(scriptFile);
+            }
+            catch (System.Exception ex)
+            {
+                MessageBlob.ShowPopup("File is jammed: " + scriptFile);
+            }            
 
             ProgramSettings.Save();
         }
@@ -307,6 +342,14 @@ namespace Vestbi
                     {
                         var menu = new ContextMenu();
 
+                        if (_updateRequired)
+                        {
+                            var updateButton = new MenuItem() { };
+                            updateButton.Header = "Update!";
+                            updateButton.Click += (oi, ei) => Process.Start(_updUrl);
+                            menu.Items.Add(updateButton);
+                        }
+
                         var openButton = new MenuItem() { };
                         openButton.Header = "Open";
                         openButton.Click += (oi, ei) => ShowActivate();
@@ -314,7 +357,11 @@ namespace Vestbi
 
                         var closeButton = new MenuItem();
                         closeButton.Header = "Exit";
-                        closeButton.Click += (oi, ei) => Close();
+                        closeButton.Click += (oi, ei) =>
+                            {
+                                _reallyClosing = true;
+                                Close();
+                            };
                         menu.Items.Add(closeButton);
 
                         menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse;
@@ -335,12 +382,12 @@ namespace Vestbi
 
             menu.BorderThickness = new Thickness(1);
             menu.BorderBrush = System.Windows.Media.Brushes.White;
-            menu.Closed += ContextMenu_Closed_1;
+            menu.Closed += ContextMenu_Closed;
             menu.PlacementTarget = placement;
             menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Absolute;
             var location = placement.PointToScreen(new Point(0, 0));
             
-
+            // TODO: make it OOP-ish!
             foreach (var option in options)
             {
                 if (option.Type == typeof(bool))
@@ -415,6 +462,40 @@ namespace Vestbi
                     menu.Items.Add(menuItem);
                     height += 20;
                 }
+                else if (option.Type == typeof(string))
+                {
+                    var curOption = option as PropertyBinder<string>;
+
+                    var textbox = new TextBox();
+                    textbox.Text = curOption.Getter();
+                    textbox.TextChanged += (o, e) =>
+                    {
+                        curOption.Setter(textbox.Text);
+                    };
+                    textbox.Width = 108;
+
+                    var stack = new StackPanel();
+                    stack.HorizontalAlignment = HorizontalAlignment.Right;
+
+                    if (curOption.Name != "")
+                    {
+                        var textblock = new TextBlock();
+                        textblock.Text = curOption.Name;
+                        textblock.Margin = new Thickness(0, -2, 0, 0);
+                        textblock.TextAlignment = TextAlignment.Right;
+                        stack.Children.Add(textblock);
+                        height += 20;
+                    }
+                    
+                    stack.Children.Add(textbox);
+                    stack.Margin = new Thickness(0, 0, -9, 0);
+
+                    var menuItem = new MenuItem();
+                    menuItem.StaysOpenOnClick = true;
+                    menuItem.Header = stack;
+                    menu.Items.Add(menuItem);
+                    height += 10;
+                }
             }
 
             menu.PlacementRectangle = new System.Windows.Rect(location.X + placement.Width - width + 5, location.Y + placement.Height - 5,
@@ -452,6 +533,8 @@ namespace Vestbi
             if (_programOptionsShown == show)
                 return;
 
+            //CbAutostart.IsEnabled = Helpers.IsAdmin();
+
             _programOptionsShown = show;
             var m = GridOptions.Margin;
             var dm = new Thickness(show ? -10 : -GridOptions.ActualWidth, m.Top, m.Right, m.Bottom);
@@ -460,9 +543,28 @@ namespace Vestbi
             GridOptions.BeginAnimation(Grid.MarginProperty, anim, HandoffBehavior.SnapshotAndReplace);
         }
 
+        void HideAndStartWorking(bool hideAlways)
+        {
+            _binder.Stop();
+            ShowOptions(false);
+            SaveSettings();
+            if (MakeBindings() || hideAlways)
+            {
+                Hide();
+
+                if (!ProgramSettings.Current.GuideShown && !_trayMessageShown)
+                {
+                    MessageBlob.ShowPopup("Application will be in tray!", 5);
+                    _trayMessageShown = true;
+                }
+            }
+        }
+
         #endregion
 
         #region Event handlers
+
+        #region Key binding controls
 
         private void hook_KeyPressed(object sender, KeyPressedEventArgs e)
         {
@@ -487,61 +589,196 @@ namespace Vestbi
                 CoreMethods.ExecuteScript();
         }
         
-        private void TextBox_MouseDown_1(object sender, MouseButtonEventArgs e)
+        private void BinderBox_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ShowOptions(false);
             var tb = sender as TextBox;
-            _binder.Stop();
-            _binder.Start(tb);
-            TbHidden.Focus();
+
+            if (!_binder.IsBindedTo(tb))
+            {
+                _binder.Stop();
+                _binder.Start(tb);
+            }
         }
 
-        private void MetroWindow_Closing_1(object sender, System.ComponentModel.CancelEventArgs e)
+        private void BinderBox_LostFocus(object sender, RoutedEventArgs e)
         {
+            var tb = sender as TextBox;
+
+            if (_binder.IsBindedTo(tb))
+                _binder.Stop();
+        }
+
+        private void BinderBoxPreview_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return && _binder.IsWorking())
+            {
+                _binder.Stop();
+            }
+            e.Handled = true;
+        }
+
+        private void BinderBox_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBox;
+            e.Handled = true;
+            if (tb.SelectionLength != 0)
+                tb.SelectionLength = 0; // beware stackoverflow!
+        }
+
+        #endregion
+
+        #region Controls highlight
+
+        private void AnyControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            UIElement element = (UIElement)sender;
+
+            if (element is TextBox)
+            {
+                var tb = element as TextBox;
+            }
+
+            DropShadowEffect dropShadowEffect = new DropShadowEffect();
+            dropShadowEffect.ShadowDepth = 0;
+            dropShadowEffect.Color = (Color)Resources["AccentColor"];
+
+            dropShadowEffect.Opacity = currentTheme == Theme.Dark ? 1 : 0.5;
+            dropShadowEffect.BlurRadius = 9;
+
+            element.Effect = dropShadowEffect;
+        }
+
+        private void AnyControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            UIElement myTextBox = (UIElement)sender;
+            myTextBox.Effect = null;
+        }
+
+        private void Copyleft_MouseEnter(object sender, MouseEventArgs e)
+        {
+            TextBlock text = sender as TextBlock;
+            var anim = new DoubleAnimation(text.Opacity, 0.2, (Duration)TimeSpan.FromSeconds(0.5));
+            anim.RepeatBehavior = new RepeatBehavior(777);
+            anim.EasingFunction = new PowerEase() { EasingMode = EasingMode.EaseOut };
+            anim.AutoReverse = true;
+            text.BeginAnimation(TextBlock.OpacityProperty, anim, HandoffBehavior.SnapshotAndReplace);
+        }
+
+        private void Copyleft_MouseLeave(object sender, MouseEventArgs e)
+        {
+            TextBlock text = sender as TextBlock;
+            var anim = new DoubleAnimation(text.Opacity, 0.1, (Duration)TimeSpan.FromSeconds(0.5));
+            anim.EasingFunction = new PowerEase() { EasingMode = EasingMode.EaseOut };
+            text.BeginAnimation(TextBlock.OpacityProperty, anim, HandoffBehavior.SnapshotAndReplace);
+        }
+        
+        private void MainButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Button button = (Button)sender;
+
+            var anim2 = new ThicknessAnimation(button.Margin, new Thickness(0, 0, originalMainButtonPos.Right + 20, originalMainButtonPos.Bottom),
+                (Duration)TimeSpan.FromSeconds(0.5));
+            anim2.EasingFunction = new BackEase() { EasingMode = EasingMode.EaseOut };
+            button.BeginAnimation(Button.MarginProperty, anim2, HandoffBehavior.SnapshotAndReplace);
+
+            button.Effect = Helpers.MakePulsingShadow((Color)Resources["AccentColor"]);
+        }
+
+        private void MainButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Button button = (Button)sender;
+            button.Effect = null;
+
+            var anim2 = new ThicknessAnimation(button.Margin, originalMainButtonPos,
+                (Duration)TimeSpan.FromSeconds(0.2));
+            anim2.EasingFunction = new BackEase() { EasingMode = EasingMode.EaseOut };
+            button.BeginAnimation(Button.MarginProperty, anim2, HandoffBehavior.SnapshotAndReplace);
+        }
+
+        #endregion
+
+        #region Window events
+
+        private void MetroWindow_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            if (!_optionsShown)
+                e.Handled = true;
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            _allowSizeAnim = true;
+
+            this.Opacity = 0;
+
+            if (!ProgramSettings.Current.GuideShown)
+                new Guide().ShowDialog();
+
+            // add custom message hook to handle messages from another processes
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            source.AddHook(new HwndSourceHook(WndProc));
+
+            var opAnim = new DoubleAnimation(0, 1, (Duration)TimeSpan.FromSeconds(0.5));
+            this.BeginAnimation(Window.OpacityProperty, opAnim);
+        }
+
+        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!_reallyClosing)
+            {
+                e.Cancel = true;
+                HideAndStartWorking(true);
+                return;
+            }
+
+            if(!ProgramSettings.Current.GuideShown)
+                ProgramSettings.Current.GuideShown = true;
+
             _binder.Dispose();
             _trayIcon.Visible = false;
             SaveSettings();
         }
 
-        private void MetroWindow_StateChanged_1(object sender, EventArgs e)
+        private void MetroWindow_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Minimized)
             {
-                WindowState = WindowState.Normal;
-                _binder.Stop();
-                SaveSettings();
-                MakeBindings();
-                Hide();
-                return;
+                //WindowState = WindowState.Normal;
+                HideAndStartWorking(true);
+            }
+            else if(WindowState == WindowState.Normal && !IsVisible)
+            {
+                Show();
             }
         }
 
-        private void TbHidden_LostFocus(object sender, RoutedEventArgs e)
+        private void MetroWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _binder.Stop();
         }
 
-        private void TbRun_TextChanged(object sender, TextChangedEventArgs e)
+        private void MetroWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-
+            Tabs.TabStripMargin = new Thickness(0, ActualHeight - (362 - 288), 0, 0);
         }
 
-        private void TbHidden_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void MainWindow_Deactivated(object sender, EventArgs e)
         {
-            if (e.Key == Key.Return && _binder.IsWorking())
-            {
-                _binder.Stop();
-                e.Handled = true;
-            }
+            _binder.Stop();
         }
 
-        private void ContextMenu_Closed_1(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region Options context menus
+
+        private void ContextMenu_Closed(object sender, RoutedEventArgs e)
         {
             _optionsShown = false;
             FadeRect.Visibility = Visibility.Hidden;
         }
 
-        private void RunOptionsClick(object sender, RoutedEventArgs e)
+        private void RunOptions_Click(object sender, RoutedEventArgs e)
         {
             if (!_optionsShown)
             {
@@ -568,7 +805,7 @@ namespace Vestbi
             }
         }
 
-        private void BrowseOptionsClick(object sender, RoutedEventArgs e)
+        private void BrowseOptions_Click(object sender, RoutedEventArgs e)
         {
             if (!_optionsShown)
             {
@@ -580,7 +817,7 @@ namespace Vestbi
             }
         }
 
-        private void RegexOptionsClick(object sender, RoutedEventArgs e)
+        private void RegexOptions_Click(object sender, RoutedEventArgs e)
         {
             if (!_optionsShown)
             {
@@ -594,7 +831,7 @@ namespace Vestbi
             }
         }
 
-        private void ScriptOptionsClick(object sender, RoutedEventArgs e)
+        private void ScriptOptions_Click(object sender, RoutedEventArgs e)
         {
             if (!_optionsShown)
             {
@@ -609,93 +846,77 @@ namespace Vestbi
             }
         }
 
-        private void MetroWindow_ContextMenuOpening_1(object sender, ContextMenuEventArgs e)
+        private void AppendToFileOptions_Click(object sender, RoutedEventArgs e)
         {
             if (!_optionsShown)
-                e.Handled = true;
-        }
-
-        private void MetroWindow_Loaded_1(object sender, RoutedEventArgs e)
-        {
-            _allowSizeAnim = true;
-
-            this.Opacity = 0;
-
-            if (!ProgramSettings.Current.GuideShown)
             {
-                ProgramSettings.Current.GuideShown = true;
-                var guide = new Guide();
-                guide.ShowDialog();
+                _optionsShown = true;
+                FadeRect.Visibility = Visibility.Visible;
+                this.ContextMenu = CreateContextMenu(sender as Button,
+                    new PropertyBinder<bool>("Insert separator", o => ProgramSettings.Current.appendDelimeter = o, () => ProgramSettings.Current.appendDelimeter),
+                    new PropertyBinder<string>("", o => ProgramSettings.Current.appendDelimeterFormat = o, () => ProgramSettings.Current.appendDelimeterFormat),
+                    new PropertyBinder<bool>("Insert timestamp", o => ProgramSettings.Current.appendTimestamp = o, () => ProgramSettings.Current.appendTimestamp),
+                    new PropertyBinder<string>("", o => ProgramSettings.Current.appendTimestampFormat = o, () => ProgramSettings.Current.appendTimestampFormat)
+                    );
             }
-
-            var opAnim = new DoubleAnimation(0, 1, (Duration)TimeSpan.FromSeconds(0.5));
-            this.BeginAnimation(Window.OpacityProperty, opAnim);
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            _binder.Stop();
+        #endregion
 
-            ShowOptions(false);
-            SaveSettings();
-            if (MakeBindings())
-                Hide();
+        #region Themes management
+
+        private void AccentMenu_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ThemeManager.ChangeTheme(this, this.currentAccent, this.currentTheme);
         }
 
-        private void Button_MouseEnter_1(object sender, MouseEventArgs e)
+        private void AccentButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            UIElement element = (UIElement)sender;
+            var accentName = (string)((MenuItem)sender).Header;
+            var currentAccent = ThemeManager.DefaultAccents.First(x => x.Name == accentName);
+            ThemeManager.ChangeTheme(this, currentAccent, this.currentTheme);
+        }
 
-            if (element is TextBox)
+        private void AccentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var accentName = ((string)((MenuItem)sender).Header);
+
+            this.currentAccent = ThemeManager.DefaultAccents.First(x => x.Name == accentName);
+            ThemeManager.ChangeTheme(this, this.currentAccent, this.currentTheme);
+            ProgramSettings.Current.Accent = accentName;
+        }
+
+        private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            if (menuItem.Header == RbThemeDark)
             {
-                var tb = element as TextBox;
+                RbThemeDark.IsChecked = !RbThemeDark.IsChecked;
+                RbThemeLight.IsChecked = !RbThemeDark.IsChecked;
             }
-
-            DropShadowEffect dropShadowEffect = new DropShadowEffect();
-            dropShadowEffect.ShadowDepth = 0;
-            dropShadowEffect.Color = (Color)Resources["AccentColor"];
-            
-            dropShadowEffect.Opacity = currentTheme == Theme.Dark ? 1 : 0.5;
-            dropShadowEffect.BlurRadius = 9;
-
-            element.Effect = dropShadowEffect;
+            else
+            {
+                RbThemeLight.IsChecked = !RbThemeLight.IsChecked;
+                RbThemeDark.IsChecked = !RbThemeLight.IsChecked;
+            }
         }
 
-        private void MainButton_MouseEnter(object sender, MouseEventArgs e)
+        private void AccentSelectorClick(object sender, RoutedEventArgs e)
         {
-            Button button = (Button)sender;
-
-            var anim2 = new ThicknessAnimation(button.Margin, new Thickness(0, 0, originalMainButtonPos.Right + 20, originalMainButtonPos.Bottom), 
-                (Duration)TimeSpan.FromSeconds(0.5));
-            anim2.EasingFunction = new BackEase() { EasingMode = EasingMode.EaseOut };
-            button.BeginAnimation(Button.MarginProperty, anim2, HandoffBehavior.SnapshotAndReplace);
-
-            button.Effect = Helpers.MakePulsingShadow((Color)Resources["AccentColor"]);
+            var btn = sender as Button;
+            btn.ContextMenu.IsOpen = true;
         }
 
-        private void MainButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Button button = (Button)sender;
-            button.Effect = null;
+        #endregion
 
-            var anim2 = new ThicknessAnimation(button.Margin, originalMainButtonPos,
-                (Duration)TimeSpan.FromSeconds(0.2));
-            anim2.EasingFunction = new BackEase() { EasingMode = EasingMode.EaseOut };
-            button.BeginAnimation(Button.MarginProperty, anim2, HandoffBehavior.SnapshotAndReplace);
-        }
+        #region Button handlers
 
-        private void Button_MouseLeave_1(object sender, MouseEventArgs e)
+        private void MainButton_Click(object sender, RoutedEventArgs e)
         {
-            UIElement myTextBox = (UIElement)sender;
-            myTextBox.Effect = null;
-        }
-
-        private void MetroWindow_SizeChanged_1(object sender, SizeChangedEventArgs e)
-        {
-            Tabs.TabStripMargin = new Thickness(0, ActualHeight - (362 - 288), 0, 0);
+            HideAndStartWorking(false);
         }
       
-        private void Tabs_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!_allowSizeAnim)
                 return;
@@ -706,7 +927,10 @@ namespace Vestbi
             if (TabAdvanced.IsSelected)
                 newMinHeight = ActualHeight > MinHeight ? ActualHeight : MinHeight;
             else if (TabProfessional.IsSelected)
+            {
                 newMinHeight = ActualHeight > 455 ? ActualHeight : 455;
+
+            }
 
             if (Math.Abs(newMinHeight - ActualHeight) < 10)
                 return;
@@ -729,71 +953,8 @@ namespace Vestbi
                 });
             tm.Start();
         }
-
-        private void AccentSelectorClick(object sender, RoutedEventArgs e)
-        {
-            var btn = sender as Button;
-            btn.ContextMenu.IsOpen = true;
-        }
-
-        private void TextBlock_MouseEnter_1(object sender, MouseEventArgs e)
-        {
-            TextBlock text = sender as TextBlock;
-            var anim = new DoubleAnimation(text.Opacity, 0.15, (Duration)TimeSpan.FromSeconds(0.5));
-            anim.RepeatBehavior = new RepeatBehavior(777);
-            anim.EasingFunction = new PowerEase() { EasingMode = EasingMode.EaseOut };
-            anim.AutoReverse = true;
-            text.BeginAnimation(TextBlock.OpacityProperty, anim, HandoffBehavior.SnapshotAndReplace);
-        }
-
-        private void TextBlock_MouseLeave_1(object sender, MouseEventArgs e)
-        {
-            TextBlock text = sender as TextBlock;
-            var anim = new DoubleAnimation(text.Opacity, 0.01, (Duration)TimeSpan.FromSeconds(0.5));
-            anim.EasingFunction = new PowerEase() { EasingMode = EasingMode.EaseOut };
-            text.BeginAnimation(TextBlock.OpacityProperty, anim, HandoffBehavior.SnapshotAndReplace);
-        }
-
-        private void ChangeAccent(object sender, RoutedEventArgs e)
-        {
-            ChangeAccent((string)((MenuItem)sender).Header);
-        }
-
-        private void ChangeAccent(string accentName)
-        {
-            this.currentAccent = ThemeManager.DefaultAccents.First(x => x.Name == accentName);
-            ThemeManager.ChangeTheme(this, this.currentAccent, this.currentTheme);
-            ProgramSettings.Current.Accent = accentName;
-        }
-
-        private void AccentMenuMouseLeave(object sender, MouseEventArgs e)
-        {
-            ThemeManager.ChangeTheme(this, this.currentAccent, this.currentTheme);
-        }
-
-        private void AccentButtonMouseEnter(object sender, MouseEventArgs e)
-        {
-            var accentName = (string)((MenuItem)sender).Header;
-            var currentAccent = ThemeManager.DefaultAccents.First(x => x.Name == accentName);
-            ThemeManager.ChangeTheme(this, currentAccent, this.currentTheme);
-        }
-
-        private void ClickThemeMenuItem(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuItem;
-            if (menuItem.Header == RbThemeDark)
-            {
-                RbThemeDark.IsChecked = !RbThemeDark.IsChecked;
-                RbThemeLight.IsChecked = !RbThemeDark.IsChecked;
-            }
-            else
-            {
-                RbThemeLight.IsChecked = !RbThemeLight.IsChecked;
-                RbThemeDark.IsChecked = !RbThemeLight.IsChecked;
-            }
-        }
-
-        private void ButtonBuildClick(object sender, RoutedEventArgs e)
+       
+        private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
             BuildScript();
         }
@@ -804,21 +965,30 @@ namespace Vestbi
                 BuildScript();
         }
 
-        private void CopyleftMousedown(object sender, MouseButtonEventArgs e)
+        private void Copyleft_Mousedown(object sender, MouseButtonEventArgs e)
         {
             var about = new About() { Owner = this };
             about.ShowDialog();
         }
 
-        private void UpdateButtonClick(object sender, RoutedEventArgs e)
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://sourceforge.net/projects/vestbi/files/latest/download");
+            Process.Start(_updUrl);
         }
 
-        private void BtnOptionsClick(object sender, RoutedEventArgs e)
+        private void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
             ShowOptions(!_programOptionsShown);
         }
+
+        private void CbAutostart_CheckChanged(object sender, RoutedEventArgs e)
+        {
+            bool isChecked = (sender as CheckBox).IsChecked == true;
+            ProgramSettings.Current.Autostart = isChecked;
+            Helpers.MakeStartup(isChecked);
+        }
+
+        #endregion
 
         #endregion
     }
