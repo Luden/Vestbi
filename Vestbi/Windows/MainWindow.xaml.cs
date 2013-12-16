@@ -123,9 +123,7 @@ namespace Vestbi
 
             if (ProgramSettings.Current.Minimized)
             {
-                MakeBindings();
-                Hide();
-                return;
+                HideAndStartWorking(true);
             }
 
             //int index = 0;

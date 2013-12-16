@@ -13,6 +13,9 @@ namespace Vestbi
 {
     class CoreMethods
     {
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr GetOpenClipboardWindow();
+
         static string arg_pattern = "{text}";
 
         /// <summary>
@@ -55,8 +58,6 @@ namespace Vestbi
 
                 Clipboard.Clear();
 
-                System.Threading.Thread.Sleep(100);
-                
                 SendKeysRE.Send("^c");
 
                 System.Threading.Thread.Sleep(100); // naive attemption to wait for app to response ctrl+c
@@ -65,6 +66,12 @@ namespace Vestbi
                 {
                     try
                     {
+                        if (GetOpenClipboardWindow() != IntPtr.Zero) // 100500th multithreading issue. some apps just open clipboard and leave the party...
+                        {
+                            System.Threading.Thread.Sleep(100);
+                            continue;
+                        }
+
                         System.Threading.Thread.Yield(); // stupid multithreading apps breaking my creation! mu ha ha! hm... damn chrome!
 
                         str = "";
@@ -235,13 +242,13 @@ namespace Vestbi
 
             try
             {
-                if (ProgramSettings.Current.appendFile == "" || !Uri.IsWellFormedUriString(ProgramSettings.Current.appendFile, UriKind.RelativeOrAbsolute))
+                if (ProgramSettings.Current.appendFile == "" || ProgramSettings.Current.appendFile.IndexOfAny(Path.GetInvalidPathChars()) != -1)
                 {
                     ProgramSettings.Current.appendFile = "temp.txt";
                 }
                 
                 var fileName = ProgramSettings.Current.appendFile;
-                if (!Uri.IsWellFormedUriString(fileName, UriKind.Absolute))
+                if (!Path.IsPathRooted(fileName))
                     fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
                 if(!File.Exists(fileName))
