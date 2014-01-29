@@ -1,0 +1,7 @@
+Installer/Installer/
+MefScriptInterface/bin/
+Distribs/
+*/obj/
+*/bin/
+*.csproj.user
+*.suo
