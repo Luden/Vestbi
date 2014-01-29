@@ -90,15 +90,19 @@ namespace Vestbi
 
         private void PopupWnd_Deactivated(object sender, EventArgs e)
         {
-            DialogResult = false;
-            Close();
+            if (DialogResult == null) // win8 compatibility
+            {
+                DialogResult = false;
+                Close();
+            }
         }
 
         private void PopupWnd_ContentRendered(object sender, EventArgs e)
         {
             try
             {
-                this.GlobalActivate();
+                //this.GlobalActivate();
+                Activate();
             }
             catch (System.Exception ex)
             {

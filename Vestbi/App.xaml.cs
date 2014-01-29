@@ -47,7 +47,18 @@ namespace Vestbi
             }
 
             this.StartupUri = new Uri("Windows/MainWindow.xaml", UriKind.Relative); // do not ctor window if Shutdown initiated
+
+            AppDomain.CurrentDomain.FirstChanceException += FirstChanceHandler;
+
             base.OnStartup(e);
+        }
+
+        static void FirstChanceHandler(object source, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+        {
+            if (e.Exception is System.InvalidOperationException)
+            {
+                int zzz = 1;
+            }
         }
     }
 }
