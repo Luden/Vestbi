@@ -12,7 +12,7 @@ Features
 * <strong>Run any command line.</strong> Say you have a batch file to make some manipulations with text. Just select text you want and press assigned shortcut to execute command line with selected text, get results (option) and paste it into previous selection (option). Its not necessary to select text - popup editor will appear to input text. You can just run any program without any text!
 * <strong>Open browser</strong> with selected text. Text can be a part of more complex preset request. By default - it just asks Google with the text you selected.
 * <strong>Append to file.</strong> If you are collecting wisdom, or making lyrics, or saving code snippets - just select text you want and press shortcut! It also can insert timestamps and delimiters between text blocks.
-* <strong>Translate.</strong> Open built-in browser with request to Google Translate with selected text and selected source and destination languages.
+* <strong>Translate.</strong> Take selected text and translate it between selected source and destination languages using Microsoft Translate.
 * <strong>Regex.</strong> Search and replace through text using regular expressions.
 * <strong>Script.</strong> Make your own method of text manipulation! With C# everything is possible!
 
