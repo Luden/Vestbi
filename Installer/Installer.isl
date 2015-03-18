@@ -4014,7 +4014,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{29CB78DB-2FA8-4E39-884E-DFEC0DF14645}</td></row>
 		<row><td>ISUSSignature</td><td>{1FF86630-485E-4E6D-90FA-516216271063}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewAppV,viewRealSetupDesign,viewSetupDesign,viewSetupTypes,viewUpdateService,viewShortcuts,viewRegistry,viewIniFiles,viewTextFiles,viewXMLConfig,viewUI,viewBillboards,viewTextMessages,viewSystemSearch,viewInstallScriptStd,viewCustomActions,viewSupportFiles,viewRelease,viewDesignPatches,viewISToday,viewAppFiles,viewFeatureFiles,viewObjects,viewProject,viewUpgradePaths</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewAppV,viewRealSetupDesign,viewSetupDesign,viewSetupTypes,viewUpdateService,viewShortcuts,viewRegistry,viewIniFiles,viewTextFiles,viewXMLConfig,viewUI,viewBillboards,viewTextMessages,viewSystemSearch,viewInstallScriptStd,viewCustomActions,viewSupportFiles,viewRelease,viewDesignPatches,viewISToday,viewAppFiles,viewFeatureFiles,viewObjects,viewProject,viewUpgradePaths,viewDependencies</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
@@ -4392,9 +4392,9 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>PROGMSG_IIS_ROLLBACKVROOTS</td><td>##IDS_PROGMSG_IIS_ROLLBACKVROOTS##</td><td/></row>
 		<row><td>PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS</td><td>##IDS_PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS##</td><td/></row>
 		<row><td>PROGRAMFILETOLAUNCHATEND</td><td>[INSTALLDIR]Vestbi.Primary output</td><td/></row>
-		<row><td>ProductCode</td><td>{7C7A9C2B-4E56-4811-9E37-B967CDB804D6}</td><td/></row>
+		<row><td>ProductCode</td><td>{EA21A5CC-738F-4C84-A5BB-17F4CDAEAC6C}</td><td/></row>
 		<row><td>ProductName</td><td>Vestbi</td><td/></row>
-		<row><td>ProductVersion</td><td>1.3.0</td><td/></row>
+		<row><td>ProductVersion</td><td>1.4.0</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
 		<row><td>ProgressType1</td><td>Installing</td><td/></row>
 		<row><td>ProgressType2</td><td>installed</td><td/></row>
@@ -4686,7 +4686,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<col def="S255">Remove</col>
 		<col def="s72">ActionProperty</col>
 		<col def="S72">ISDisplayName</col>
-		<row><td>{D13C1EEE-8626-470E-A862-DDBCE415AD24}</td><td></td><td>1.3.0</td><td>1033</td><td>768</td><td/><td>ISACTIONPROP1</td><td>NewUpgradeEntry1</td></row>
+		<row><td>{D13C1EEE-8626-470E-A862-DDBCE415AD24}</td><td></td><td>1.4.0</td><td>1033</td><td>768</td><td/><td>ISACTIONPROP1</td><td>NewUpgradeEntry1</td></row>
 	</table>
 
 	<table name="Verb">

@@ -33,8 +33,6 @@ namespace Vestbi
         public string lngTranslateFrom;
         [XmlElement(ElementName = "Translate_to")]
         public string lngTranslateTo;
-        [XmlElement(ElementName = "Translate_url_pattern")]
-        public string translateUrl;
 
         [XmlElement(ElementName = "Regex_key")]
         public string kRegex;
@@ -165,7 +163,6 @@ namespace Vestbi
                     Current.bRegexPasteToOutput = false;
                     Current.bRegexPopResults = false;
                     Current.url = "http://www.google.com/search?q={text}&ie=utf-8&oe=utf-8&channel=suggest";
-                    Current.translateUrl = "http://translate.google.com/?hl=en&tab=wT&authuser=0#{0}/{1}/{2}";
                     Current.scriptFile = "Script/code.cs";
                     Current.scriptCompilerPath = Path.Combine(Environment.GetEnvironmentVariable("WINDIR"), "Microsoft.NET\\Framework\\v4.0.30319\\MSBuild.exe");
                     Current.scriptCompilerParams = "\"{0}\" /p:Configuration=Release /p:Platform=\"AnyCPU\" /v:q /clp:ErrorsOnly /p:OutputDir=\"BuildTemp\\\" ";

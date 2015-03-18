@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Services.Client;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft;
 
 namespace Vestbi
 {
@@ -279,11 +281,17 @@ namespace Vestbi
 
             try
             {
-                var pattern = ProgramSettings.Current.translateUrl;
-                str = WebUtility.UrlEncode(str);
-                var url = string.Format(pattern, ProgramSettings.Current.lngTranslateFrom, ProgramSettings.Current.lngTranslateTo, str);
+				string SECURE_ACCOUNT_ID = "kBcDV52crVLxzkY8rXXO3VyRn+/P2hIrLPGw+cGQaBM=";
+				string ROOT_SERVICE_URL = "https://api.datamarket.azure.com/Bing/MicrosoftTranslator/v1/Translate";
 
-                BrowserToast.ShowToast(url);
+				TranslatorContainer container = new TranslatorContainer(new Uri(ROOT_SERVICE_URL));
+				container.Credentials = new NetworkCredential("accountKey", SECURE_ACCOUNT_ID);
+
+				DataServiceQuery<Translation> query = container.Translate(str, ProgramSettings.Current.lngTranslateTo, ProgramSettings.Current.lngTranslateFrom);
+				foreach (var trans in query.Execute())
+				{
+					MessageBlob.ShowPopup(trans.Text);
+				}
             }
             catch (System.Exception ex)
             {
