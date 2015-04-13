@@ -53,4 +53,4 @@ Used libraries
 
 Contacts
 -----
-pavelluden@gmail.com
+Pavel (developer) - pavelluden@gmail.com
