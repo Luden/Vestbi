@@ -50,3 +50,7 @@ Used libraries
 -----
 * [Mahapps.Metro](https://github.com/MahApps/MahApps.Metro)
 * [ICSharpCode.AvalonEdit] (https://github.com/icsharpcode/SharpDevelop/wiki/AvalonEdit)
+
+Contacts
+-----
+pavelluden@gmail.com
